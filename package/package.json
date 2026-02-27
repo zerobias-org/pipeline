@@ -1,0 +1,31 @@
+{
+  "name": "@zerobias-org/pipeline-zerobias-zerobias",
+  "version": "2.0.0",
+  "description": "ZeroBias community pipelines artifact",
+  "author": "team@zerobias.com",
+  "license": "ISC",
+  "type": "module",
+  "repository": {
+    "type": "git",
+    "url": "git@github.com:zerobias-org/pipeline.git",
+    "directory": "package"
+  },
+  "scripts": {
+    "nx:publish": "../scripts/publish.sh",
+    "nx:prepublish": "../scripts/pr-publish.sh"
+  },
+  "publishConfig": {
+    "registry": "https://npm.pkg.github.com/"
+  },
+  "files": [
+    "pipeline/**.yml"
+  ],
+  "zerobias": {
+    "package": "zerobias.zerobias.pipeline",
+    "dataloader-version": "1.0.0",
+    "import-artifact": "pipeline"
+  },
+  "dependencies": {
+    "@zerobias-org/collectorbot-zerobias-schemas-agentskills": "0.1.1"
+  }
+}

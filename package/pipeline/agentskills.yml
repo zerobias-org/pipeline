@@ -1,0 +1,13 @@
+id: 71be9e19-6e3a-4db4-baa1-39d43f762e4d
+name: Agent Skills Shared Objects Pipeline
+description: Pipeline that collects Agent Skill definitions from GitHub repos containing SKILL.md files.
+productId: 24fd77dd-bd66-490a-b6b6-3b1b5a875332
+collectorArtifact: '@zerobias-org/collectorbot-zerobias-schemas-agentskills'
+executionMode: caller
+batchMode: full
+format: json
+connectorType: product_specific
+params: {}
+frequency: daily
+executionTime: '10:00:00'
+timezone: America/New_York

@@ -1,0 +1,47 @@
+{
+  "name": "@zerobias-org/pipeline",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "ZeroBias community pipeline artifacts",
+  "main": "main.js",
+  "workspaces": [
+    "package/**"
+  ],
+  "scripts": {
+    "validate": "nx run-many -t validate",
+    "clean": "nx reset",
+    "clean:full": "nx reset && rm -rf node_modules",
+    "reset": "npm run clean:full && npm install",
+    "lerna:dry-run": "lerna version --no-git-tag-version --no-push --conventional-commits",
+    "lerna:version": "lerna version --no-git-tag-version --no-push --conventional-commits --yes",
+    "prepublish-init": "prepublish-init"
+  },
+  "publishConfig": {
+    "registry": "https://npm.pkg.github.com/"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/zerobias-org/pipeline.git"
+  },
+  "author": "team@zerobias.com",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/zerobias-org/pipeline/issues"
+  },
+  "homepage": "https://github.com/zerobias-org/pipeline#readme",
+  "overrides": {
+    "tar": "^7.5.7",
+    "@rollup/plugin-commonjs": "^28.0.0"
+  },
+  "devDependencies": {
+    "@commitlint/cli": "^20.3.1",
+    "@commitlint/config-conventional": "^20.3.1",
+    "@zerobias-org/devops-tools": "^1.0.43",
+    "@zerobias-org/types-core-js": "^1.2.12",
+    "conventional-changelog-conventionalcommits": "^9.1.0",
+    "lerna": "^9.0.3",
+    "nx": "^22.4.3",
+    "tsx": "^4.21.0"
+  }
+}
