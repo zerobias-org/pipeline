@@ -18,7 +18,8 @@
     "registry": "https://npm.pkg.github.com/"
   },
   "files": [
-    "pipeline/**.yml"
+    "pipeline/**.yml",
+    "npm-shrinkwrap.json"
   ],
   "zerobias": {
     "package": "zerobias.zerobias.pipeline",
