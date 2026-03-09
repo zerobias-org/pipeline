@@ -11,5 +11,6 @@ params:
   serverLimit: 0
   collectTools: true
 frequency: weekly
+dayOfWeek: monday
 executionTime: '08:00:00'
 timezone: America/New_York
