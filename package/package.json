@@ -27,6 +27,7 @@
     "import-artifact": "pipeline"
   },
   "dependencies": {
-    "@zerobias-org/collectorbot-zerobias-schemas-agentskills": "0.1.1"
+    "@zerobias-org/collectorbot-zerobias-schemas-agentskills": "0.1.1",
+    "@zerobias-org/collectorbot-zerobias-schemas-mcpservers": "^0.1.0"
   }
 }

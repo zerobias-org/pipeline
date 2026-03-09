@@ -1,0 +1,15 @@
+id: f8a23b17-4d6e-4c91-b5a2-7e3f9d1c8a45
+name: MCP Servers Shared Objects Pipeline
+description: Pipeline that collects MCP server and tool definitions from GitHub repos maintaining MCP server registries.
+productId: c015a106-c60c-45a8-a8a1-fe9472327bd9
+collectorArtifact: '@zerobias-org/collectorbot-zerobias-schemas-mcpservers'
+executionMode: caller
+batchMode: full
+format: json
+connectorType: product_specific
+params:
+  serverLimit: 0
+  collectTools: true
+frequency: weekly
+executionTime: '08:00:00'
+timezone: America/New_York
