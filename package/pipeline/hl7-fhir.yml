@@ -1,0 +1,12 @@
+id: e8584fe1-a3ca-43a8-b721-9361830eca5d
+name: HL7 FHIR R4 Resources Pipeline
+description: Pipeline that collects FHIR R4 resources from any FHIR-compliant API endpoint.
+productId: 9d394723-dab5-4bcf-96a0-97ce7e89b197
+collectorArtifact: '@zerobias-org/collectorbot-hl7-fhir'
+executionMode: caller
+batchMode: full
+format: json
+connectorType: product_specific
+frequency: daily
+executionTime: '11:00:00'
+timezone: America/New_York

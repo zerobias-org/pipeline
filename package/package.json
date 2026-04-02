@@ -27,6 +27,7 @@
     "import-artifact": "pipeline"
   },
   "dependencies": {
+    "@zerobias-org/collectorbot-hl7-fhir": "^0.2.0",
     "@zerobias-org/collectorbot-zerobias-schemas-agentskills": "0.1.9",
     "@zerobias-org/collectorbot-zerobias-schemas-mcpservers": "0.1.0"
   }
