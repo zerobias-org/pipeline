@@ -7,6 +7,21 @@ executionMode: caller
 batchMode: full
 format: json
 connectorType: product_specific
+params:
+  fhirServerUrl: https://hapi.fhir.org/baseR4
+  resourceTypes:
+    - Patient
+    - Practitioner
+    - Organization
+    - AuditEvent
+    - Consent
+    - Provenance
+    - Encounter
+    - Observation
+    - Condition
+    - MedicationRequest
+  pageSize: 1000
+  concurrency: 5
 frequency: daily
 executionTime: '11:00:00'
 timezone: America/New_York
