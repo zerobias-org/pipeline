@@ -1,0 +1,50 @@
+name: "@zerobias-org/pipeline"
+version: "1.0.0"
+
+# Dataloader validation runs against an ephemeral Neon Postgres branch
+# provisioned by NeonDataloaderTask at task-execution time (same pattern
+# as vendor / suite / tag). The task creates and deletes its own branch
+# via the Neon API. Pipelines reference collectorbots (collectorArtifact)
+# and products (productId); the dataloader resolves those during load.
+env:
+  NEON_API_KEY:
+    source: vault
+    vault: "operations-kv/neon/content.api-key"
+    mask: true
+
+  NEON_PROJECT_ID:
+    source: vault
+    vault: "operations-kv/neon/content.project-id"
+
+  NEON_PARENT_BRANCH:
+    type: string
+    default: "content-master"
+    description: Neon parent branch to create test branches from
+
+  NEON_DB_ROLE:
+    type: string
+    default: "neondb_owner"
+    description: Neon database role
+
+  NEON_DB_NAME:
+    type: string
+    default: "zerobias"
+    description: Neon database name
+
+# ── Lifecycle ────────────────────────────────────────────────────────
+# Content repos have no generate/compile/Docker phases, so the chain
+# reduces to validate + dataloader + publishNpm + promote.
+lifecycle:
+  clean:     ./gradlew clean
+  build:     ./gradlew build
+  test:      ./gradlew test
+  gate:      ./gradlew gate
+  gateCheck: ./gradlew gateCheck
+  publish:   ./gradlew publish
+
+require:
+  - tool: dataloader
+    check: "dataloader --version 2>&1"
+    parse: "Dataloader v(\\S+)"
+    version: ">=1.0.87"
+    install: "npm i -g @zerobias-com/platform-dataloader"
