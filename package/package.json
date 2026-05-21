@@ -1,6 +1,6 @@
 {
   "name": "@zerobias-org/pipeline-zerobias-zerobias",
-  "version": "2.3.0",
+  "version": "3.0.0",
   "description": "ZeroBias community pipelines artifact",
   "author": "team@zerobias.com",
   "license": "ISC",
@@ -9,10 +9,6 @@
     "type": "git",
     "url": "git@github.com:zerobias-org/pipeline.git",
     "directory": "package"
-  },
-  "scripts": {
-    "nx:publish": "../scripts/publish.sh",
-    "nx:prepublish": "../scripts/pr-publish.sh"
   },
   "publishConfig": {
     "registry": "https://npm.pkg.github.com/"
