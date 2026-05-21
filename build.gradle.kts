@@ -19,27 +19,26 @@ group = "com.zerobias.content"
 // branch during gate. See com/platform/dataloader/src/processors/pipeline/
 // (PipelineFileHandler.ts, PipelineArtifactLoader.ts).
 //
-// NON-STANDARD SHAPE: a pipeline npm package is a SINGLE package holding
-// MANY pipeline ymls (package/pipeline/*.yml), not one-artifact-per-dir
-// like vendor/suite. There is no directory ↔ npm-name triangulation to
-// do here — the dataloader reads both `name` and `zerobias.package` from
-// the same package.json and there's no authoritative on-disk path to
-// compare against. So this validator only enforces what the dataloader
-// CANNOT or DOES NOT check:
+// SHAPE: a pipeline package is a single npm package at
+// package/<vendor>/<product>/ that holds MANY pipeline ymls under its
+// own pipeline/ subdirectory (each yml has its own `id` UUID), rather
+// than one-artifact-per-directory like vendor/suite. This validator
+// only enforces what the dataloader CANNOT or DOES NOT check:
 //
-//   1. Required files exist on disk (package.json, .npmrc, a non-empty
-//      pipeline/ directory). The dataloader never sees a missing .npmrc
-//      until publish fails.
-//   2. package.json declares `import-artifact: pipeline` and a non-blank
-//      `zerobias.package` / `dataloader-version` (cheap sanity; a wrong
-//      import-artifact silently routes the package to the wrong handler).
+//   1. Filesystem ↔ npm ↔ zerobias-block triangulation. The directory
+//      package/<vendor>/<product>/ deterministically yields the npm
+//      name and zerobias.package; the dataloader reads zerobias.package
+//      but never the npm `name` field nor the on-disk path, so a wrong
+//      name publishes under the wrong package and only surfaces in prod.
+//   2. Required files exist (package.json, .npmrc, a non-empty pipeline/
+//      directory).
 //   3. Repo-wide unique pipeline `id` UUIDs (separate :validateUniqueIds
-//      task below). The dataloader processes one yml at a time, so a
+//      task below). Dataloader processes one yml at a time, so a
 //      duplicate id only surfaces when the second pipeline overwrites
 //      the first's DB row.
 // ════════════════════════════════════════════════════════════
 extra["contentValidator"] = { proj: org.gradle.api.Project ->
-    val projectDir = proj.projectDir   // = package/
+    val projectDir = proj.projectDir   // = package/<vendor>/<product>/
     val tag = "[pipeline-validator] ${proj.path}"
 
     require(projectDir.resolve("package.json").isFile) { "$tag package.json missing in ${projectDir.path}" }
@@ -52,11 +51,18 @@ extra["contentValidator"] = { proj: org.gradle.api.Project ->
         .toList()
     require(ymls.isNotEmpty()) { "$tag no pipeline definitions found under ${pipelineDir.path}" }
 
+    // ── Filesystem ↔ npm ↔ zerobias-block triangulation ──
+    // package/<vendor>/<product>/ → npm @zerobias-org/pipeline-<vendor>-<product>,
+    // zerobias.package <vendor>.<product>.pipeline. Both must agree.
+    val productCode = projectDir.name
+    val vendorCode = projectDir.parentFile.name
     val pkgDoc = SchemaPrimitives.parseJson(projectDir.resolve("package.json"))
-    val name = pkgDoc["name"] as? String
-    require(name != null && name.startsWith("@zerobias-org/pipeline-")) {
-        "$tag package.json name '$name' must start with '@zerobias-org/pipeline-'"
-    }
+    SchemaPrimitives.requirePackageIdentity(
+        pkgDoc,
+        expectedNpmName = "@zerobias-org/pipeline-$vendorCode-$productCode",
+        expectedZerobiasPackage = "$vendorCode.$productCode.pipeline",
+        field = "$tag package.json",
+    )
 
     @Suppress("UNCHECKED_CAST")
     val zb = (pkgDoc["zerobias"] ?: pkgDoc["auditmation"]) as? Map<String, Any?>
@@ -64,14 +70,8 @@ extra["contentValidator"] = { proj: org.gradle.api.Project ->
     require(zb["import-artifact"] == "pipeline") {
         "$tag zerobias.import-artifact must be 'pipeline' (got '${zb["import-artifact"]}')"
     }
-    require((zb["package"] as? String)?.isNotBlank() == true) {
-        "$tag zerobias.package must be a non-blank string"
-    }
-    require((zb["dataloader-version"] as? String)?.isNotBlank() == true) {
-        "$tag zerobias.dataloader-version must be a non-blank string"
-    }
 
-    proj.logger.lifecycle("$tag: ${ymls.size} pipeline definition(s), package=${zb["package"]}")
+    proj.logger.lifecycle("$tag: vendor=$vendorCode product=$productCode, ${ymls.size} pipeline definition(s)")
 }
 
 // ════════════════════════════════════════════════════════════
@@ -81,8 +81,8 @@ extra["contentValidator"] = { proj: org.gradle.api.Project ->
 // UUID, and fails if two pipelines share one. Cannot be done by the
 // dataloader (it processes one yml at a time); a collision only surfaces
 // in prod when the second pipeline tries to load to the same DB row.
-// Wired as a dependency of the per-package validateContent so any gate
-// run picks it up. (deprecated.yml lives at package/ root, not under
+// Wired as a dependency of each per-package validateContent so any gate
+// run picks it up. (deprecated.yml lives at the package root, not under
 // pipeline/, so it's naturally excluded.)
 // ════════════════════════════════════════════════════════════
 val validateUniqueIds by tasks.registering {
@@ -163,10 +163,12 @@ val changedModules by tasks.registering {
             commandLine(diffArgs)
         }.standardOutput.asText.get()
 
-        // Single content package rooted at package/. Emit it if anything
-        // under package/ changed.
-        if (result.lines().any { it.startsWith("package/") }) {
-            println("package")
-        }
+        val changed = result.lines()
+            .filter { it.startsWith("package/") }
+            .map { it.split("/").drop(1).take(2).joinToString("/") }
+            .distinct()
+            .filter { it.isNotEmpty() && it.contains("/") }
+
+        changed.forEach { println(it) }
     }
 }

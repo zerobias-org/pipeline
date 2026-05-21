@@ -1,6 +1,6 @@
 {
   "version": "3.0.0-uat.0",
-  "branch": "chore/bootstrap-gradle-zbb",
+  "branch": "fix/pipeline-package-depth",
   "sourceHash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
   "testHash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
   "tasks": {

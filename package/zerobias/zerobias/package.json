@@ -8,7 +8,7 @@
   "repository": {
     "type": "git",
     "url": "git@github.com:zerobias-org/pipeline.git",
-    "directory": "package"
+    "directory": "package/zerobias/zerobias"
   },
   "publishConfig": {
     "registry": "https://npm.pkg.github.com/"

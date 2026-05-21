@@ -1,16 +1,15 @@
 // settings.gradle.kts for @zerobias-org/pipeline.
 //
-// NOTE — non-standard shape. Unlike vendor/suite/crosswalk (one npm
-// package per leaf directory under package/), the pipeline repo has a
-// SINGLE content npm package that lives AT `package/` itself and holds
-// many pipeline definition ymls under `package/pipeline/*.yml`. The
-// canonical auto-discovery walk (filter build.gradle.kts under package/)
-// computes an empty relative path for a marker at package/build.gradle.kts
-// and breaks, so we include the project explicitly instead.
+// Pipeline packages follow the depth-2 vendor/product layout
+// (package/<vendor>/<product>/), matching the npm name
+// @zerobias-org/pipeline-<vendor>-<product>. Each package is a single
+// npm artifact that holds many pipeline definition ymls under its own
+// pipeline/ subdirectory.
 //
-// The reusable publish workflow is unaffected — it walks UP from each
-// changed `package/pipeline/*.yml` to the nearest build.gradle.kts
-// (package/build.gradle.kts).
+// (The package must NOT sit directly at package/: the publish workflow's
+// detect job walks UP from each changed file to the nearest
+// build.gradle.kts but explicitly skips the dir literally named
+// `package`, so a package rooted there is never detected.)
 
 pluginManagement {
     // Use local build-tools if available (dev), otherwise pull from
@@ -41,9 +40,20 @@ pluginManagement {
 
 rootProject.name = "pipelines"
 
-// Single content package, rooted at package/. The npm package
-// (@zerobias-org/pipeline-zerobias-zerobias) carries many pipeline ymls;
-// the bundle (@zerobias-org/pipeline-bundle) is workflow-managed and is
-// NOT a gradle subproject (matches vendor/suite).
-include(":pipeline")
-project(":pipeline").projectDir = file("package")
+// Auto-discover pipeline packages under package/. Packages live two
+// directories deep — package/<vendor>/<product>/ — and the marker walk
+// picks up build.gradle.kts at any depth. Project paths mirror the
+// filesystem: package/zerobias/zerobias → :zerobias:zerobias.
+val packageDir = file("package")
+if (packageDir.exists()) {
+    packageDir.walkTopDown()
+        .filter { it.name == "build.gradle.kts" }
+        .forEach { buildFile ->
+            val moduleDir = buildFile.parentFile
+            val relativePath = moduleDir.relativeTo(packageDir).path
+            val projectPath = relativePath.replace(File.separatorChar, ':')
+
+            include(projectPath)
+            project(":$projectPath").projectDir = moduleDir
+        }
+}
