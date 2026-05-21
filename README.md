@@ -6,24 +6,32 @@ when to collect data into AuditgraphDB.
 
 ## Shape (non-standard)
 
-Unlike most content repos (one npm package per leaf directory), pipelines use a
-**single npm package** that holds **many** pipeline definitions:
+Each pipeline npm package lives at `package/<vendor>/<product>/` (depth 2,
+matching the npm name `@zerobias-org/pipeline-<vendor>-<product>`) and — unlike
+most content repos (one artifact per package) — holds **many** pipeline
+definitions under its own `pipeline/` subdirectory:
 
 ```
 package/
-├── package.json        # @zerobias-org/pipeline-zerobias-zerobias
-│                        #   zerobias.package = zerobias.zerobias.pipeline
-│                        #   zerobias.import-artifact = pipeline
-├── .npmrc
-├── build.gradle.kts     # one-line marker: plugins { id("zb.content") }
-├── gate-stamp.json      # written by ./gradlew :pipeline:gate
-├── deprecated.yml       # { pipelines: [<uuid>, ...] } — soft-deletes
-└── pipeline/
-    ├── agentskills.yml  # one pipeline per yml; each has its own `id` UUID
-    ├── hl7-fhir.yml
-    └── mcpservers.yml
-bundle/                  # @zerobias-org/pipeline-bundle (workflow-managed)
+└── zerobias/
+    └── zerobias/                # @zerobias-org/pipeline-zerobias-zerobias
+        ├── package.json         #   zerobias.package = zerobias.zerobias.pipeline
+        │                         #   zerobias.import-artifact = pipeline
+        ├── .npmrc
+        ├── build.gradle.kts     # one-line marker: plugins { id("zb.content") }
+        ├── gate-stamp.json      # written by ./gradlew :zerobias:zerobias:gate
+        ├── deprecated.yml       # { pipelines: [<uuid>, ...] } — soft-deletes
+        └── pipeline/
+            ├── agentskills.yml  # one pipeline per yml; each has its own `id`
+            ├── hl7-fhir.yml
+            └── mcpservers.yml
+bundle/                          # @zerobias-org/pipeline-bundle (workflow-managed)
 ```
+
+The package must NOT sit directly at `package/`: the publish workflow's
+`detect` job walks up from each changed file to the nearest `build.gradle.kts`
+but skips the directory literally named `package`, so a package rooted there is
+never detected.
 
 Each `pipeline/*.yml` carries `id`, `name`, `productId`, `collectorArtifact`,
 `executionMode` (`caller`/`receiver`), `batchMode`, `format`, `connectorType`,
@@ -34,7 +42,7 @@ is the source of truth for all field-level validation.
 
 ```bash
 # Validate + dataloader integration + write gate-stamp
-./gradlew :pipeline:gate
+./gradlew :zerobias:zerobias:gate
 
 # Cross-cut: ensure no two pipelines share an id UUID
 ./gradlew validateUniqueIds
