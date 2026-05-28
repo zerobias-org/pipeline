@@ -1,4 +1,10 @@
-// settings.gradle.kts for @zerobias-org/pipeline.
+// settings.gradle.kts — pipeline monorepo
+//
+// Plugin resolution order: mavenLocal (for `publishToMavenLocal` dev builds
+// of build-tools) → GitHub Packages Maven → gradle plugin portal → mavenCentral.
+// Never via `includeBuild` of a sibling repo path: dev iteration goes through
+// `./gradlew publishToMavenLocal` from build-tools so CI and local resolve
+// the artifact the same way.
 //
 // Pipeline packages follow the depth-2 vendor/product layout
 // (package/<vendor>/<product>/), matching the npm name
@@ -12,20 +18,13 @@
 // `package`, so a package rooted there is never detected.)
 
 pluginManagement {
-    // Use local build-tools if available (dev), otherwise pull from
-    // GitHub Packages Maven (CI).
-    val localBuildTools = file("../util/packages/build-tools")
-    if (localBuildTools.exists()) {
-        includeBuild(localBuildTools)
-    }
     repositories {
+        mavenLocal()
         maven {
             url = uri("https://maven.pkg.github.com/zerobias-org/util")
             credentials {
                 username = System.getenv("GITHUB_ACTOR") ?: "zerobias-org"
-                password = System.getenv("READ_TOKEN")
-                    ?: System.getenv("NPM_TOKEN")
-                    ?: System.getenv("GITHUB_TOKEN") ?: ""
+                password = System.getenv("READ_TOKEN") ?: System.getenv("NPM_TOKEN") ?: System.getenv("GITHUB_TOKEN") ?: ""
             }
         }
         gradlePluginPortal()
