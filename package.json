@@ -5,9 +5,6 @@
   "type": "module",
   "description": "ZeroBias community pipeline artifacts",
   "main": "main.js",
-  "workspaces": [
-    "package/**"
-  ],
   "publishConfig": {
     "registry": "https://npm.pkg.github.com/"
   },
