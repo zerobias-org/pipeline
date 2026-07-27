@@ -1,0 +1,28 @@
+{
+  "name": "@zerobias-org/pipeline-nist-cmvp",
+  "version": "0.0.0",
+  "description": "NIST CMVP pipeline configuration",
+  "author": "team@zerobias.com",
+  "license": "ISC",
+  "type": "module",
+  "repository": {
+    "type": "git",
+    "url": "git@github.com:zerobias-org/pipeline.git",
+    "directory": "package/nist/cmvp"
+  },
+  "publishConfig": {
+    "registry": "https://npm.pkg.github.com/"
+  },
+  "files": [
+    "pipeline/**.yml",
+    "npm-shrinkwrap.json"
+  ],
+  "zerobias": {
+    "package": "nist.cmvp.pipeline",
+    "dataloader-version": "1.0.0",
+    "import-artifact": "pipeline"
+  },
+  "dependencies": {
+    "@zerobias-org/collectorbot-nist-cmvp": "file:../../../../collectorbot/package/nist/cmvp"
+  }
+}

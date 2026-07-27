@@ -1,0 +1,12 @@
+id: 21df6bd3-ae1e-484e-846c-73323ffae668
+name: NIST CMVP Certificates Pipeline
+description: Pipeline that collects the full NIST Cryptographic Module Validation Program (CMVP) certificate registry.
+productId: fd013316-37b5-47d0-a81b-929a174a44ab
+collectorArtifact: '@zerobias-org/collectorbot-nist-cmvp'
+executionMode: caller
+batchMode: full
+format: json
+connectorType: product_specific
+frequency: daily
+executionTime: '09:00:00'
+timezone: America/New_York
