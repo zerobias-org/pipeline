@@ -1,8 +1,8 @@
 id: 4b887967-4614-4b2f-a99f-abc2ed8955f8
-name: Compliance Certifications Shared Objects Pipeline
-description: Pipeline that loads the curated cybersecurity and compliance certification catalog bundled with the certifications collector.
+name: Compliance Qualifications Shared Objects Pipeline
+description: Pipeline that loads the curated cybersecurity and compliance qualification catalog bundled with the qualifications collector.
 productId: 0064bb5e-cdf3-41d8-907d-33f9233a975d
-collectorArtifact: '@zerobias-org/collectorbot-zerobias-schemas-certifications'
+collectorArtifact: '@zerobias-org/collectorbot-zerobias-schemas-qualifications'
 executionMode: caller
 batchMode: full
 format: json
