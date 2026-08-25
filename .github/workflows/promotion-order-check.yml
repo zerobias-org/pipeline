@@ -1,0 +1,13 @@
+name: Promotion Order Check
+
+on:
+  pull_request:
+    types:
+      - opened
+      - reopened
+      - edited
+
+jobs:
+  check:
+    uses: zerobias-org/devops/.github/workflows/promotion-order-check-reusable.yml@main
+    secrets: inherit

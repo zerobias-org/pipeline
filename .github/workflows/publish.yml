@@ -24,4 +24,22 @@ jobs:
       ghcr-namespace: zerobias-org
       dispatch-input-name: pipeline
       dispatch-input-value: ${{ inputs.pipeline }}
+      # Env branches are synced by sync-env-branches.yml instead of the
+      # built-in post-publish cascade (conflict-safe, rescue PRs).
+      skip-sync: true
     secrets: inherit
+
+  # The publish pipeline commits version bumps + bundle refresh to main with
+  # the workflow token, whose pushes cannot retrigger the push-based sync —
+  # dispatch it explicitly so env branches pick those commits up.
+  sync:
+    needs: publish
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    permissions:
+      actions: write
+    steps:
+      - name: Dispatch env-branch sync
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh workflow run sync-env-branches.yml --repo "$GITHUB_REPOSITORY" --ref main
