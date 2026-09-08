@@ -6,7 +6,41 @@ version: "1.0.0"
 # as vendor / suite / tag). The task creates and deletes its own branch
 # via the Neon API. Pipelines reference collectorbots (collectorArtifact)
 # and products (productId); the dataloader resolves those during load.
+# ── Shared dev credentials — inherited, not redeclared ───────────────
+# ZB_TOKEN / ZB_API_KEY / ZB_ORG_ID / ZB_PLATFORM_URL / KNOWLEDGE_MCP_URL /
+# NPM_CONFIG_TAG live ONCE per slot on the shared `dev` stack
+# (@zerobias-org/dev-stack, auto-pulled from the registry at
+# `zbb stack add`) and are IMPORTED here — the same depends/imports
+# pattern vendor / suite / product / framework use.
+# ⚠ Never `env set` these six on THIS stack: a per-stack override
+# permanently shadows the import, so credential rotation on the dev
+# stack stops propagating here (zbb never clobbers user overrides).
+depends:
+  dev:
+    package: "@zerobias-org/dev-stack@^1.0.0"
+
+imports:
+  dev:
+    optional: true
+    vars:
+      - ZB_TOKEN
+      - ZB_API_KEY
+      - ZB_ORG_ID
+      - ZB_PLATFORM_URL
+      - KNOWLEDGE_MCP_URL
+      - NPM_CONFIG_TAG
+
 env:
+  DATALOADER_SERVICE_URL:
+    type: string
+    default: "https://app.zerobias.com/api/dataloader"
+    description: >-
+      Dataloader endpoint for the GATE's Neon step (separate from
+      ZB_PLATFORM_URL — the gate does not honor that var). LEAVE ON THE
+      PROD DEFAULT even for non-prod org targets: the step auths with the
+      prod-issued ZB_TOKEN, and a per-env override makes that key 401.
+      The org load never reads this (it uses ZB_PLATFORM_URL + ZB_API_KEY).
+
   NEON_API_KEY:
     source: vault
     vault: "operations-kv/neon/content.api-key"
@@ -41,6 +75,13 @@ lifecycle:
   gate:      ./gradlew gate
   gateCheck: ./gradlew gateCheck
   publish:   ./gradlew publish
+  # Org-first SDLC: publish an org-private rc + queue the org dataloader
+  # job. The -PorgPublish=true flag is what flips the shared publish
+  # pipeline into org mode — zbb does not inject it on its own, and the
+  # zb.base `publishOrg` alias reads the flag at CONFIGURATION time, so
+  # without this entry zbb falls back to a bare `./gradlew publishOrg`
+  # that hard-fails.
+  publishOrg: ./gradlew publishOrg -PorgPublish=true
 
 require:
   - tool: dataloader
