@@ -1,6 +1,6 @@
 {
   "name": "@zerobias-org/pipeline-bundle",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "All installable ZeroBias community pipelines",
   "author": "team@zerobias.com",
   "license": "ISC",
@@ -19,6 +19,6 @@
     "dataloader-version": "1.0.0"
   },
   "dependencies": {
-    "@zerobias-org/pipeline-zerobias-zerobias": "3.0.0"
+    "@zerobias-org/pipeline-zerobias-zerobias": "3.0.1"
   }
 }
