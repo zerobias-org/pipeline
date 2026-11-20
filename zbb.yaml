@@ -65,6 +65,14 @@ env:
     default: "zerobias"
     description: Neon database name
 
+  SCHEDULER_SOURCE:
+    type: string
+    default: "Memory"
+    description: >-
+      Scheduler the gate's dataloader step gives the pipelines' crons. Memory keeps the gate from
+      creating real EventBridge schedules; with none, the dataloader fails the load of every
+      pipeline that is On ("has no external schedule id after upsert").
+
 # ── Lifecycle ────────────────────────────────────────────────────────
 # Content repos have no generate/compile/Docker phases, so the chain
 # reduces to validate + dataloader + publishNpm + promote.

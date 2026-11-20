@@ -14,3 +14,6 @@ frequency: weekly
 dayOfWeek: monday
 executionTime: '08:00:00'
 timezone: America/New_York
+viewableInCatalog:
+  - className: McpServer
+    displayName: MCP Servers
