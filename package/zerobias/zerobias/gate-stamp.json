@@ -1,7 +1,7 @@
 {
-  "version": "3.0.1",
-  "branch": "build/npmrc-canonical",
-  "sourceHash": "495dbcdd4a5860da32f64056186abb4d7f2104eb02dbb11a70cd1243efab4352",
+  "version": "3.0.1-uat.0",
+  "branch": "feat/catalog-data-sets",
+  "sourceHash": "b1a4dac8dd4d39257c19975f7f878578e8ec460196894d42399d7a88b24ce344",
   "testHash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
   "tasks": {
     "validate": "passed",
@@ -11,7 +11,8 @@
     "testDirect": "passed",
     "testDocker": "passed",
     "testDataloader": "passed",
-    "buildArtifacts": "passed"
+    "buildArtifacts": "passed",
+    "dataloaderExec": "passed"
   },
   "tests": {
       "unit": { "expected": 0, "ran": 0, "status": "skipped" },

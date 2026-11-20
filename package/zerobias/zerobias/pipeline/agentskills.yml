@@ -12,3 +12,6 @@ params:
 frequency: daily
 executionTime: '10:00:00'
 timezone: America/New_York
+viewableInCatalog:
+  - className: AgentSkill
+    displayName: Agent Skills
